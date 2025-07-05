@@ -9,4 +9,5 @@ public class UploadedFileConfiguration : IEntityTypeConfiguration<UploadedFile>
 		builder.Property(x => x.ContentType).HasMaxLength(50);
 		builder.Property(x => x.FileExtension).HasMaxLength(10);
 	}
+
 }
