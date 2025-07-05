@@ -4,3 +4,5 @@ global using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 global using FileManager.Api.Entites;
 global using FileManager.Api.Persistence;
+global using FileManager.Api.Services;
+
