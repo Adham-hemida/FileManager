@@ -36,4 +36,10 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+//Before .Net 9
+//app.UseStaticFiles();
+
+//.Net 9
+app.MapStaticAssets();
+
 app.Run();
