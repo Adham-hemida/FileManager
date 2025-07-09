@@ -47,8 +47,8 @@ public class FileService(IWebHostEnvironment webHostEnvironment, ApplicationDbCo
 			return ([], string.Empty, string.Empty);
 
 		var path = Path.Combine(_filePath, file.StoredFileName);
-		MemoryStream memoryStream = new MemoryStream();
-		using FileStream fileStream = new FileStream(path, FileMode.Open);
+		MemoryStream memoryStream = new();
+		using FileStream fileStream = new (path, FileMode.Open);
 	    fileStream.CopyTo(memoryStream);
 		memoryStream.Position = 0; // Reset the position to the beginning of the stream
 		return (memoryStream.ToArray(), file.ContentType, file.FileName);
