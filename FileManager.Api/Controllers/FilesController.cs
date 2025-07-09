@@ -29,6 +29,13 @@ public class FilesController(IFileService fileService) : ControllerBase
 		 await _fileService.UploadImageAsync(request.Image, cancellationToken);
 		return Created();
 	}
+	
+	[HttpGet("download/{id}")]
+	public async Task<IActionResult> DownLoad([FromRoute] Guid id,CancellationToken cancellationToken )
+	{
+		var (fileContent, contentType, fileName) = await _fileService.DownLoadAsync(id, cancellationToken);
+		return fileContent is []?NotFound() : File(fileContent, contentType, fileName);
+	}
 
 
 }
