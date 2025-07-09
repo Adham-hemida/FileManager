@@ -2,7 +2,7 @@
 
 namespace FileManager.Api.Services;
 
-public class FileService(IWebHostEnvironment webHostEnvironment,ApplicationDbContext context) : IFileService
+public class FileService(IWebHostEnvironment webHostEnvironment, ApplicationDbContext context) : IFileService
 {
 	private readonly string _filePath = $"{webHostEnvironment.WebRootPath}/uploads";
 	private readonly string _imagePath = $"{webHostEnvironment.WebRootPath}/images";
@@ -31,7 +31,7 @@ public class FileService(IWebHostEnvironment webHostEnvironment,ApplicationDbCon
 
 		return uploadedFiles.Select(x => x.Id).ToList();
 	}
-		
+
 	public async Task UploadImageAsync(IFormFile image, CancellationToken cancellationToken = default)
 	{
 		var path = Path.Combine(_imagePath, image.FileName);
@@ -40,8 +40,21 @@ public class FileService(IWebHostEnvironment webHostEnvironment,ApplicationDbCon
 		await image.CopyToAsync(stream, cancellationToken);
 	}
 
+	public async Task<(byte[] fileContent, string contentType, string fileName)> DownLoadAsync(Guid id, CancellationToken cancellationToken = default)
+	{
+		var file = await _context.Files.FindAsync(id, cancellationToken);
+		if (file == null)
+			return ([], string.Empty, string.Empty);
 
-	private async Task<UploadedFile> SaveFile(IFormFile file,CancellationToken cancellationToken=default)
+		var path = Path.Combine(_filePath, file.StoredFileName);
+		MemoryStream memoryStream = new MemoryStream();
+		using FileStream fileStream = new FileStream(path, FileMode.Open);
+	    fileStream.CopyTo(memoryStream);
+		memoryStream.Position = 0; // Reset the position to the beginning of the stream
+		return (memoryStream.ToArray(), file.ContentType, file.FileName);
+
+	}
+	private async Task<UploadedFile> SaveFile(IFormFile file, CancellationToken cancellationToken = default)
 	{
 		var randomFileName = Path.GetRandomFileName();
 
@@ -60,4 +73,6 @@ public class FileService(IWebHostEnvironment webHostEnvironment,ApplicationDbCon
 
 		return uploadedFile;
 	}
+
+
 }
