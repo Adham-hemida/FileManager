@@ -54,6 +54,18 @@ public class FileService(IWebHostEnvironment webHostEnvironment, ApplicationDbCo
 		return (memoryStream.ToArray(), file.ContentType, file.FileName);
 
 	}
+	public async Task<(FileStream? stream, string contentType, string fileName)> StreamAsync(Guid id, CancellationToken cancellationToken = default)
+	{
+		var file=await _context.Files.FindAsync(id, cancellationToken);
+
+		if (file is null)
+			return (null, string.Empty, string.Empty);
+
+		var path=Path.Combine(_filePath, file.StoredFileName);
+		var fileStream=File.OpenRead(path);
+		return (fileStream, file.ContentType, file.FileName);
+
+	}
 	private async Task<UploadedFile> SaveFile(IFormFile file, CancellationToken cancellationToken = default)
 	{
 		var randomFileName = Path.GetRandomFileName();
